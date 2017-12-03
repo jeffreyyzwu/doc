@@ -3,9 +3,8 @@
 1. **列表元数据中的key不能使用索引**
 
   具体细节参见文章：
-
-  > [React 实践心得：key 属性的原理和用法](http://taobaofed.org/blog/2016/08/24/react-key/);
-  > [index作为key是反模式](https://segmentfault.com/a/1190000006152449);
+  + [React 实践心得：key 属性的原理和用法](http://taobaofed.org/blog/2016/08/24/react-key/);
+  + [index作为key是反模式](https://segmentfault.com/a/1190000006152449);
 
   代码中可使用[shortid](https://github.com/dylang/shortid)类库生成随机ID
 
@@ -13,77 +12,75 @@
 
   Ant.desgin提供里控件校验规则功能，但必须作为[Form](https://github.com/ant-design/ant-design/blob/master/components/form/Form.tsx)的子元素才能生效。下面以一段代码示例
 
-  常见代码
+  ```javascript
+    import React from "react";
+    import {Form, Row, Col, Select} from "antd";
 
-    ```javascript
-      import React from "react";
-      import {Form, Row, Col, Select} from "antd";
+    const Option = Select.Option;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 7 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 12 },
+        md: { span: 10 },
+      },
+    };
 
-      const Option = Select.Option;
-      const formItemLayout = {
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 7 },
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 12 },
-          md: { span: 10 },
-        },
-      };
-
-      @Form.create()
-      export default class OrderForm extends React.Component {
-        handleSubmit = () => {
-          this.props.form.validateFieldsAndScroll((errors, values) => {
-            if (!errors) {
-              //do something
-            }
-          });
-        }
-        render(){
-          const {getFieldDecorator} = this.props.form;
-
-          return (
-            <Form>
-              <Row>
-                <Col span={4}>
-                  <Form.Item label={'BG'}
-                    {...FormItemLayout}>
-                      {getFieldDecorator('BG', {
-                        rules: [{
-                          required: true, message: '请选择BG',
-                        }],
-                      })(
-                        <Select>
-                          <Option key='1' value='WXG'>WXG</Option>
-                        </Select>
-                      )}
-                  </Form.Item>
-                </Col>
-                <Col span={4}>
-                  <Form.Item label={'XBG'}
-                    {...FormItemLayout}>
-                      {getFieldDecorator('XBG', {
-                        rules: [{
-                          required: true, message: '请选择虚拟BG',
-                        }],
-                      })(
-                        <Select>
-                          <Option key='1' value='XWXG'>XWXG</Option>
-                        </Select>
-                      )}
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row>
-                <Button onClick={this.handleSubmit}>提交</Button>
-              </Row>
-            </Form>
-          );
-        }
+    @Form.create()
+    export default class OrderForm extends React.Component {
+      handleSubmit = () => {
+        this.props.form.validateFieldsAndScroll((errors, values) => {
+          if (!errors) {
+            //do something
+          }
+        });
       }
-    ```
+      render(){
+        const {getFieldDecorator} = this.props.form;
+
+        return (
+          <Form>
+            <Row>
+              <Col span={4}>
+                <Form.Item label={'BG'}
+                  {...FormItemLayout}>
+                    {getFieldDecorator('BG', {
+                      rules: [{
+                        required: true, message: '请选择BG',
+                      }],
+                    })(
+                      <Select>
+                        <Option key='1' value='WXG'>WXG</Option>
+                      </Select>
+                    )}
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item label={'XBG'}
+                  {...FormItemLayout}>
+                    {getFieldDecorator('XBG', {
+                      rules: [{
+                        required: true, message: '请选择虚拟BG',
+                      }],
+                    })(
+                      <Select>
+                        <Option key='1' value='XWXG'>XWXG</Option>
+                      </Select>
+                    )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Button onClick={this.handleSubmit}>提交</Button>
+            </Row>
+          </Form>
+        );
+      }
+    }
+  ```
 
   以上代码存在以下问题:
     - Selet等控件没有复用
@@ -256,6 +253,6 @@
     ), document.getElementById('root'));
     ```
 
-1. **Higher-Order Component (HOC)**
-   参考文章
-   >  [深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/24776678)
+3. **Higher-Order Component (HOC)**
+  参考文章
+  + [深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/24776678)
