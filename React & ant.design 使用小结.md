@@ -8,7 +8,7 @@
 
   代码中可使用[shortid](https://github.com/dylang/shortid)类库生成随机ID
 
-1. **控件校验规则**
+2. **控件校验规则**
 
   Ant.desgin提供里控件校验规则功能，但必须作为[Form](https://github.com/ant-design/ant-design/blob/master/components/form/Form.tsx)的子元素才能生效。下面以一段代码示例
 
@@ -253,6 +253,38 @@
     ), document.getElementById('root'));
   ```
 
-3. **Higher-Order Component (HOC)**
+3. **设置默认props**
+
+  ```javascript
+    export default class Order extends React.Component{
+      static defaultProps = {
+        name : 'test'
+      };
+
+      render(){
+        return <p>{this.props.name}</p>;
+      }
+    }
+  ```
+
+　　如果babel设置为es6的转码方式，会报错，因为定义静态属性不属于es6，而在es7的草案中。ES6的class中只有静态方法，没有静态属性，所以需将babel设置为es7的转码方式。
+
+> 先安装stage-0组件，其包含了es7的特性
+
+  ```shell
+    npm install babel-preset-stage-0 --save-dev
+  ```
+
+> 在.babelrc文件添加以下配置
+
+  ```json
+    {
+      "presets": ["stage-0"],
+      "plugins": ["transform-runtime"]
+    }
+  ```
+
+4. **Higher-Order Component (HOC)**
+
   参考文章
-  + [深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/24776678)
+  > [深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/24776678)
