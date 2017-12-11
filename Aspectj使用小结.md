@@ -73,6 +73,7 @@
     ```
 
 ## Aspectj语法
+
   这个内容比较多，可重点阅读下pointcut syntax。相关链接如下
   > + [Aspectj语法](http://www.jianshu.com/p/691acc98c0b8)
 
@@ -119,7 +120,9 @@
         }
     }
   ```
+
   运行结果
+
   ```text
     before log ....
     car is running at 120km/h
@@ -250,10 +253,9 @@
     }
   ```
 
-对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，且方法可被工程编译时，使用execution更合适。
-call则适用于调用系统或外部引用类库等不可被工程编译的方法。
+对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，且方法可被工程编译时，使用execution更合适。call则适用于调用系统或外部引用类库等不可被工程编译的方法。
 
-## PointCut
+## PointCut的使用
 
 * 在方法上使用注解
 
@@ -285,6 +287,7 @@ call则适用于调用系统或外部引用类库等不可被工程编译的方�
         ...其他代码未变
     }
   ```
+
 * 在类上使用注解
 
   ```java
@@ -314,7 +317,7 @@ call则适用于调用系统或外部引用类库等不可被工程编译的方�
         ...其他代码未变
     }
   ```
-  编译后的代码，可以看出私有方法也被织入了
+  编译后的代码，可以看出私有方法也被织入了。
 
     ```java
       @AspectTraceLog
@@ -359,6 +362,7 @@ call则适用于调用系统或外部引用类库等不可被工程编译的方�
     ```
 
 * 同时兼容类和方法上的注解。先定义两个pointcut，分别为类和方法，然后在advice表达式上使用或关系适配pointcut
+
   ```java
     import org.aspectj.lang.ProceedingJoinPoint;
     import org.aspectj.lang.annotation.*;
@@ -438,7 +442,9 @@ call则适用于调用系统或外部引用类库等不可被工程编译的方�
     }
 
   ```
+
   运行结果
+
   ```text
     before log ....
     class: com.clutch.Car
@@ -448,7 +454,7 @@ call则适用于调用系统或外部引用类库等不可被工程编译的方�
     after log ....
   ```
 
-* Around advice相当于同时包含了Before和After，以上代码就可以再简化下
+* Around advice相当于同时包含了Before和After，以上代码就可以再简化下，同时增加获取方法耗时
 
   ```java
     @Around("classLogPointCut() || methodLogPointCut()")
@@ -473,6 +479,7 @@ call则适用于调用系统或外部引用类库等不可被工程编译的方�
   ```
 
   运行结果
+
   ```text
     before log ....
     class: com.clutch.Car
@@ -482,3 +489,52 @@ call则适用于调用系统或外部引用类库等不可被工程编译的方�
     method cost time:10 ms
     after log ....
   ```
+
+# Benchmark简单测试
+
+```java
+  public class Main {
+
+      public static void main(String[] args) {
+          Stopwatch sw = Stopwatch.createStarted();
+
+        Car car  = new Car();
+        for (int i = 0; i< 1000000; i++) {
+              car.run(120);
+          }
+          sw.stop();
+          System.out.println(String.format("benchmark total cost time:%d ms", sw.elapsed(TimeUnit.MILLISECONDS)));
+
+      }
+  }
+```
+
+* 使用aspect调用方法100w次，并打印pointcut方法相关信息
+  > benchmark total cost time:22686 ms
+  > benchmark total cost time:23495 ms
+  > benchmark total cost time:23586 ms
+
+平均耗时23255.67ms
+
+* 使用aspect调用方法100w次，不打印pointcut方法相关信息
+  > benchmark total cost time:12248 ms
+  > benchmark total cost time:12234 ms
+  > benchmark total cost time:12702 ms
+
+平均耗时12394.67ms
+
+* 不使用Aspectj
+  > benchmark total cost time:3889 ms
+  > benchmark total cost time:3598 ms
+  > benchmark total cost time:3479 ms
+
+平均耗时3655.33ms
+
+以上可得出一些简单的结论：
+  + AspectJ对方法的性能影响非常大，耗时是非织入代码的6倍左右。
+  + 取消pointcut中对获取方法相关信息后，耗时虽有所降低，但还是非织入代码的3倍左右
+  + pointcut尽量只织入重要节点的方法
+  + pointcut方法中的可根据Log级别判断是否获取方法信息
+  + 可能是由于测试方法非常简单，导致织入代码增加的耗时相比之下就显得非常多。如果是复杂方法，可能会降低比例
+  + 实际项目中需做性能测试，尽量压低Aspectj对性能的影响
+  
