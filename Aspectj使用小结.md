@@ -250,8 +250,8 @@
     }
   ```
 
-对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，且方法可被工程编译时，则使用execution更合适。
-call适用于调用系统，或外部引用类库等方法等不可被工程编译的。
+对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，且方法可被工程编译时，使用execution更合适。
+call则适用于调用系统或外部引用类库等不可被工程编译的方法。
 
 ## PointCut
 
@@ -409,7 +409,12 @@ call适用于调用系统，或外部引用类库等方法等不可被工程编�
             System.out.println("before log ....");
             printMethodInfo(jp);
         }
-
+      
+        @After("classLogPointCut() || methodLogPointCut()")
+        public void afterLog(JoinPoint jp) {
+            System.out.println("after log ....");
+        }
+      
         private void printMethodInfo(JoinPoint jp) {
             MethodSignature signature = (MethodSignature) jp.getSignature();
 
@@ -440,10 +445,11 @@ call适用于调用系统，或外部引用类库等方法等不可被工程编�
     Method: run
     parameter name: speed; type: int; value: 120
     car is running at 120km/h
+    after log ....
   ```
 
 * Around advice相当于同时包含了Before和After，以上代码就可以再简化下
-  
+
   ```java
     @Around("classLogPointCut() || methodLogPointCut()")
     public void aroundLog(ProceedingJoinPoint jp) throws Throwable {
@@ -475,4 +481,4 @@ call适用于调用系统，或外部引用类库等方法等不可被工程编�
     car is running at 120km/h
     method cost time:10 ms
     after log ....
-  ```  
+  ```
