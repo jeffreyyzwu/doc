@@ -30,7 +30,7 @@
 | :-------- | :--------------------------------------- |
 | pointcut  | 是一个（组）基于正则表达式的表达式，通常会选取程序中的某些我们感兴趣的执行点，或者说是程序执行点的集合。 |
 | joinPoint | 通过pointcut选取出来的集合中的具体的一个执行点。             |
-| Advice    | 在选取出来的JoinPoint上要执行的操作、逻辑。包含After、AfterReturning、AfterThrowing、Around、Before。 |
+| Advice    | 在选取出来的JoinPoint上要执行的操作、逻辑。包含After、AfterReturning、AfterThrowing、Before、Around。 |
 | aspect    | 是我们关注点的模块化，可能会横切多个对象和模块。它是一个抽象的概念，指在应用程序不同模块中的某一个领域或方面。由pointcut和advice组成。 |
 | Target    | 被aspectj横切的对象。我们所说的joinPoint就是Target的某一行，如方法开始执行的地方、方法类调用某个其他方法的代码。 |
 
@@ -71,6 +71,10 @@
         </executions>
       </plugin>
     ```
+
+## Aspectj语法
+  这个内容比较多，可重点阅读下pointcut syntax。相关链接如下
+  > + [Aspectj语法](http://www.jianshu.com/p/691acc98c0b8)
 
 ## 使用讲解
 
@@ -246,7 +250,8 @@
     }
   ```
 
-对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，使用execution更合适，编译时只侵入了一个方法，所以建议用execution。
+对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，且方法可被工程编译时，则使用execution更合适。
+call适用于调用系统，或外部引用类库等方法等不可被工程编译的。
 
 ## PointCut
 
@@ -365,15 +370,15 @@
         private void classLogPointCut(){ }
 
         @Pointcut("execution(@AspectTraceLog * *(..))")
-        private void mehtodLogPointCut(){ }
+        private void methodLogPointCut(){ }
 
-        @Before("classLogPointCut() || mehtodLogPointCut()")
+        @Before("classLogPointCut() || methodLogPointCut()")
         public void beforeLog()
         {
             System.out.println("before log ....");
         }
 
-        @After("classLogPointCut() || mehtodLogPointCut()")
+        @After("classLogPointCut() || methodLogPointCut()")
         public void afterLog()
         {
             System.out.println("after log ....");
@@ -381,7 +386,7 @@
     }
   ```
 
-* 获取切入点方法的相关信息
+* 获取切入点方法的相关信息，如类名、方法名、参数名、参数值、方法耗时等
 
   ```java
     import org.aspectj.lang.JoinPoint;
@@ -396,13 +401,16 @@
         }
 
         @Pointcut("execution(@AspectTraceLog * *(..))")
-        private void mehtodLogPointCut() {
+        private void methodLogPointCut() {
         }
 
-        @Before("classLogPointCut() || mehtodLogPointCut()")
+        @Before("classLogPointCut() || methodLogPointCut()")
         public void beforeLog(JoinPoint jp) {
             System.out.println("before log ....");
+            printMethodInfo(jp);
+        }
 
+        private void printMethodInfo(JoinPoint jp) {
             MethodSignature signature = (MethodSignature) jp.getSignature();
 
             System.out.println(String.format("class: %s", signature.getDeclaringTypeName()));
@@ -421,7 +429,7 @@
                                 paramValues[index]));
                 index++;
             }
-        }
+        }        
     }
 
   ```
@@ -433,3 +441,38 @@
     parameter name: speed; type: int; value: 120
     car is running at 120km/h
   ```
+
+* Around advice相当于同时包含了Before和After，以上代码就可以再简化下
+  
+  ```java
+    @Around("classLogPointCut() || methodLogPointCut()")
+    public void aroundLog(ProceedingJoinPoint jp) throws Throwable {
+        Stopwatch sw = Stopwatch.createStarted();
+
+        try {
+            System.out.println("before log ....");
+            printMethodInfo(jp);
+
+            //调用pointcut方法
+            jp.proceed();
+        } catch (Throwable ex) {
+            System.out.println("after log when throw exception....");
+            throw ex;
+        }
+
+        sw.stop();
+        System.out.println(String.format("method cost time:%d ms", sw.elapsed(TimeUnit.MILLISECONDS)));
+        System.out.println("after log ....");
+    }    
+  ```
+
+  运行结果
+  ```text
+    before log ....
+    class: com.clutch.Car
+    Method: run
+    parameter name: speed; type: int; value: 120
+    car is running at 120km/h
+    method cost time:10 ms
+    after log ....
+  ```  
