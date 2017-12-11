@@ -162,7 +162,7 @@
   ```
 
   ```java
-    //traceLog.class
+    //AspectLog.class
     import org.aspectj.lang.NoAspectBoundException;
     import org.aspectj.lang.annotation.After;
     import org.aspectj.lang.annotation.Aspect;
@@ -253,7 +253,7 @@
     }
   ```
 
-对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，且方法可被工程编译时，使用execution更合适。call则适用于调用系统或外部引用类库等不可被工程编译的方法。
+对比后可以看出，execution是直接织入pointcut方法，而call则是织入调用pointcut方法的方法中。如果pointcut方法被众多其他方法调用时，且方法可被工程编译时，使用execution更合适。call则适用于调用系统、外部引用类库、外部服务等不可被工程编译的方法。
 
 ## PointCut的使用
 
@@ -475,7 +475,7 @@
         sw.stop();
         System.out.println(String.format("method cost time:%d ms", sw.elapsed(TimeUnit.MILLISECONDS)));
         System.out.println("after log ....");
-    }    
+    }
   ```
 
   运行结果
@@ -497,14 +497,12 @@
 
       public static void main(String[] args) {
           Stopwatch sw = Stopwatch.createStarted();
-
-        Car car  = new Car();
-        for (int i = 0; i< 1000000; i++) {
+          Car car  = new Car();
+          for (int i = 0; i< 1000000; i++) {
               car.run(120);
           }
           sw.stop();
           System.out.println(String.format("benchmark total cost time:%d ms", sw.elapsed(TimeUnit.MILLISECONDS)));
-
       }
   }
 ```
