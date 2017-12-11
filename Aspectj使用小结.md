@@ -460,18 +460,15 @@
     @Around("classLogPointCut() || methodLogPointCut()")
     public void aroundLog(ProceedingJoinPoint jp) throws Throwable {
         Stopwatch sw = Stopwatch.createStarted();
-
         try {
             System.out.println("before log ....");
             printMethodInfo(jp);
-
             //调用pointcut方法
             jp.proceed();
         } catch (Throwable ex) {
             System.out.println("after log when throw exception....");
             throw ex;
         }
-
         sw.stop();
         System.out.println(String.format("method cost time:%d ms", sw.elapsed(TimeUnit.MILLISECONDS)));
         System.out.println("after log ....");
@@ -494,7 +491,6 @@
 
 ```java
   public class Main {
-
       public static void main(String[] args) {
           Stopwatch sw = Stopwatch.createStarted();
           Car car  = new Car();
@@ -530,9 +526,7 @@
 
 以上可得出一些简单的结论：
   + AspectJ对方法的性能影响非常大，耗时是非织入代码的6倍左右。
-  + 取消pointcut中对获取方法相关信息后，耗时虽有所降低，但还是非织入代码的3倍左右
+  + 取消pointcut中获取方法相关信息后，耗时虽有所降低，但还是非织入代码的3倍左右
   + pointcut尽量只织入重要节点的方法
   + pointcut方法中的可根据Log级别判断是否获取方法信息
-  + 可能是由于测试方法非常简单，导致织入代码增加的耗时相比之下就显得非常多。如果是复杂方法，可能会降低比例
   + 实际项目中需做性能测试，尽量压低Aspectj对性能的影响
-  
