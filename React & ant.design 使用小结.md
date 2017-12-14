@@ -252,17 +252,30 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
   };
 
   ReactDOM.render((
-      <DecoratorForm>
-          <Row>
-              <SelectList {...bgProps}/>
-              <SelectList {...xbgProps}/>
-          </Row>
-          <Row>
-              <Submit/>
-          </Row>
-      </DecoratorForm>
+    <div>
+        <DecoratorForm>
+            <Row >
+                <SelectList {...bgProps}/>
+                <SelectList {...xbgProps}/>
+            </Row>
+            <Row>
+                <Submit/>
+            </Row>
+        </DecoratorForm>
+        <DecoratorForm>
+            <Row >
+                <SelectList {...bgProps}/>
+                <SelectList {...xbgProps}/>
+            </Row>
+            <Row>
+                <Submit/>
+            </Row>
+        </DecoratorForm>
+    </div>
   ), document.getElementById('root'));
 ```
+6. 页面效果
+![页面效果](./1~pic/antd-decorator-form.jpeg)
 
 ## **设置默认props**
 
@@ -353,6 +366,6 @@ export default function labelHOC(WrappedComponent) {
 ```
 
 可以从callstack中验证控件是调用了hoc中override方法
-![hoc callstack](./1~pic/hoc-callstack.png)
+![hoc callstack](./1~pic/hoc-callstack.jpeg)
 最终页面效果
-![hoc web result](./1~pic/hoc-webresult.png)
+![hoc web result](./1~pic/hoc-webresult.jpeg)
