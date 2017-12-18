@@ -105,7 +105,7 @@ export default function labelHOC(WrappedComponent) {
 最终页面效果
 ![hoc web result](./1~pic/hoc-webresult.jpg)
 
-另外，这种形式，在HOC中可以通过super访问到被包裹控件的state、props、组件生命周期方法和 render 方法。
+另外，这种形式，在HOC中可以通过this访问到被包裹控件的state、props、方法和组件生命周期方法。
 
 ## **Ant.Desgin控件校验规则**
 
@@ -184,7 +184,7 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
 以上代码存在以下问题:
 
 + Select等控件没有复用
-+ 如果同时存在多个form，form submit时将触发其他form的校验规则。因为类中所有控件的props form属性都是指向同一个Form实例，即装饰器Form.create()
++ 如果同时存在多个form，form submit时将触发其他form的校验规则。因为类中所有控件的props form属性都是指向同一个Form实例，即装饰器Form.create()生成的
 + 代码耦合紧，影响后续维护
 
 针对以上问题，优化代码如下
