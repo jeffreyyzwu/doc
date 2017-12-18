@@ -9,6 +9,104 @@
 
 代码中可使用[shortid](https://github.com/dylang/shortid)类库生成随机ID
 
+## **设置默认props**
+
+```javascript
+export default class Order extends React.Component{
+  static defaultProps = {
+    name : 'test'
+  };
+
+  render(){
+    return <p>{this.props.name}</p>;
+  }
+}
+```
+
+如果babel设置为es6的转码方式，会报错，因为定义静态属性不属于es6，而在es7的草案中。es6的class中只有静态方法，没有静态属性，所以需将babel设置为es7的转码方式。
+
+1. 先安装stage-0组件，其包含了es7的特性
+
+```shell
+npm install babel-preset-stage-0 --save-dev
+```
+
+2. 在.babelrc文件添加以下配置
+
+```json
+{
+  "presets": ["stage-0"]
+}
+```
+
+## **Higher-Order Component (HOC)**
+
+参考文章
+> [React 高阶组件(HOC)入门指南](https://github.com/MrErHu/blog/issues/4)
+>
+> [深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/24776678)
+
+1. 反向继承(Inheritance Inversion)实现重写被包裹控件中的方法
+
+```javascript
+import React from "react";
+import labelHOC from "./labelHOC";
+
+//hoc方法作为注解加到被包裹控件上
+@labelHOC
+export default class DemoInput extends React.Component {
+  state = {
+    value: ''
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData =()=>{
+    this.setState({
+      value:'demo input default value'
+    })
+  }
+
+  render() {
+    return <input value={this.state.value} {...this.props} />;
+  }
+}
+```
+
+```javascript
+import React from "react";
+
+export default function labelHOC(WrappedComponent) {
+  //继承自被包裹控件
+  return class label extends WrappedComponent {
+    //override WrappedComponent中的方法
+    fetchData = () => {
+      this.setState({
+        value: 'hoc override value'
+      })
+    }
+
+    render() {
+      return (
+        <div>
+          <label>demo</label>
+          {super.render()}  //调用父控件的render输出
+        </div>
+      )
+    }
+  }
+}
+```
+
+可以从callstack中验证控件是调用了hoc中override方法
+![hoc callstack](./1~pic/hoc-callstack.jpg)
+最终页面效果
+![hoc web result](./1~pic/hoc-webresult.jpg)
+
+另外，这种形式，在HOC中可以通过super访问到被包裹控件的state、props、组件生命周期方法和 render 方法。
+
 ## **Ant.Desgin控件校验规则**
 
 Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://github.com/ant-design/ant-design/blob/master/components/form/Form.tsx)的子元素才能生效。下面以一段代码示例
@@ -276,98 +374,4 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
 ```
 6. 页面效果
   ![页面效果](./1~pic/antd-decorator-form.jpg)
-
-## **设置默认props**
-
-```javascript
-export default class Order extends React.Component{
-  static defaultProps = {
-    name : 'test'
-  };
-
-  render(){
-    return <p>{this.props.name}</p>;
-  }
-}
-```
-
-如果babel设置为es6的转码方式，会报错，因为定义静态属性不属于es6，而在es7的草案中。es6的class中只有静态方法，没有静态属性，所以需将babel设置为es7的转码方式。
-
-1. 先安装stage-0组件，其包含了es7的特性
-
-```shell
-npm install babel-preset-stage-0 --save-dev
-```
-
-2. 在.babelrc文件添加以下配置
-
-```json
-{
-  "presets": ["stage-0"]
-}
-```
-
-## **Higher-Order Component (HOC)**
-
-参考文章
-> [深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/24776678)
-
-1. 重写被封装控件中的方法
-
-```javascript
-import React from "react";
-import labelHOC from "./labelHOC";
-
-//hoc方法作为注解加到被封装控件上
-@labelHOC
-export default class DemoInput extends React.Component {
-  state = {
-    value: ''
-  }
-
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData =()=>{
-    this.setState({
-      value:'demo input default value'
-    })
-  }
-
-  render() {
-    return <input value={this.state.value} {...this.props} />;
-  }
-}
-```
-
-```javascript
-import React from "react";
-
-export default function labelHOC(WrappedComponent) {
-  //扩展父控件
-  return class label extends WrappedComponent {
-    //override WrappedComponent中的方法
-    fetchData = () => {
-      this.setState({
-        value: 'hoc override value'
-      })
-    }
-
-    render() {
-      return (
-        <div>
-          <label>demo</label>
-          {super.render()}  //调用父控件的render输出
-        </div>
-      )
-    }
-  }
-}
-```
-
-可以从callstack中验证控件是调用了hoc中override方法
-![hoc callstack](./1~pic/hoc-callstack.jpg)
-最终页面效果
-![hoc web result](./1~pic/hoc-webresult.jpg)
 
