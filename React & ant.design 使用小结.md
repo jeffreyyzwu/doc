@@ -291,7 +291,7 @@ export default class Order extends React.Component{
 }
 ```
 
-　　如果babel设置为es6的转码方式，会报错，因为定义静态属性不属于es6，而在es7的草案中。ES6的class中只有静态方法，没有静态属性，所以需将babel设置为es7的转码方式。
+如果babel设置为es6的转码方式，会报错，因为定义静态属性不属于es6，而在es7的草案中。es6的class中只有静态方法，没有静态属性，所以需将babel设置为es7的转码方式。
 
 1. 先安装stage-0组件，其包含了es7的特性
 
@@ -318,6 +318,7 @@ npm install babel-preset-stage-0 --save-dev
 import React from "react";
 import labelHOC from "./labelHOC";
 
+//hoc方法作为注解加到被封装控件上
 @labelHOC
 export default class DemoInput extends React.Component {
   state = {
@@ -369,3 +370,4 @@ export default function labelHOC(WrappedComponent) {
 ![hoc callstack](./1~pic/hoc-callstack.jpg)
 最终页面效果
 ![hoc web result](./1~pic/hoc-webresult.jpg)
+
