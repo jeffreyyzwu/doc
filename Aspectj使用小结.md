@@ -52,7 +52,7 @@ Spring AOP与AspectJ的区别在于：
 | Target    | 被AspectJ横切的对象。我们所说的joinPoint就是Target的某一行，如方法开始执行的地方、方法类调用某个其他方法的代码。 |
 | Weave     | 组装方面来创建一个被通知对象。这可以在编译时完成（例如使用AspectJ编译器），也可以在运行时完成。Spring和其他纯Java AOP框架一样，在运行时完成织入。|
 
-![AOP名词流程](./2~pic/aop-flow-info.jpg)
+![AOP结构](./2~pic/aop-flow-info.jpg)
 
 ## 项目配置
 
