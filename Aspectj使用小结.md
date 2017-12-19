@@ -1,4 +1,4 @@
-# Aspectj使用小结
+# AspectJ使用小结
 
 ## Aspect Oriented Programming（AOP）
 
@@ -8,21 +8,36 @@
 > 　　一般而言，我们管切入到指定类指定方法的代码片段称为切面，而切入到哪些类、哪些方法则叫切入点。有了AOP，我们就可以把几个类共有的代码，抽取到一个切片中，等到需要时再切入对象中去，从而改变其原有的行为。这样看来，AOP其实只是OOP的补充而已。OOP从横向上区分出一个个的类来，而AOP则从纵向上向对象中加入特定的代码。有了AOP，OOP变得立体了。如果加上时间维度，AOP使OOP由原来的二维变为三维了，由平面变成立体了。从技术上来说，AOP基本上是通过代理机制实现的。
 > 　　AOP在编程历史上可以说是里程碑式的，对OOP编程是一种十分有益的补充。
 
-注意其中加粗的一段“**这种在运行时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程。**”，这是其中的一种方式，在运行时动态添加。还有另外一种是在编译代码时，将代码切入到指定的方法或者位置上，这是静态添加的方式。
+注意其中加粗的一句“**这种在运行时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程**”，这是其中的一种方式，在运行时动态添加，代表性框架是Spring AOP。还有另外一种是在编译代码时，将代码切入到指定的方法或者位置上，也就是静态添加的方式，代表性框架则是AspectJ。
 
-其他相关知识请自行google
+![aop图例](./2~pic/aop-pointcut.jpg)
 
-## Aspectj介绍
+## Spring AOP与AspectJ的对比
 
-[Aspectj官网](http://www.eclipse.org/aspectj/)
+Spring AOP与AspectJ的区别在于：
+
+1. Spring AOP是运行时增强，而AspectJ是编译时增强。
+2. 虽然Spring AOP使用了AspectJ的Annotation，如使用了Aspect来定义切面，Pointcut来定义切入点、Advice来定义增强处理，但是并没有使用它的编译器和织入器。但其实现原理是JDK动态代理或CGLIB代理，在运行时生成代理类。
+3. Spring AOP的切入点支持有限，而且对于static和final的方法或类都无法支持，因为这些类、方法都无法生成代理类。AspectJ没有这些限制。
+4. Spring AOP只支持对于ioc容器管理的bean，其他的普通java类无法支持aop。而AspectJ可用于基于普通Java对象。
+
+所以，AspectJ和Spring AOP在实现上几乎无关，AspectJ的通用性和功能明显更强。
+
+参考文章
+
+> [比较分析 Spring AOP 和 AspectJ 之间的差别](http://blog.csdn.net/a128953ad/article/details/50509437)
+
+## AspectJ介绍
+
+[AspectJ官网](http://www.eclipse.org/aspectj/)
 
 > + a seamless aspect-oriented extension to the Javatm programming language（一种基于Java平台的面向切面编程的语言）
 > + Java platform compatible（兼容Java平台，可以无缝扩展）
 > + easy to learn and use（易学易用）
 
-## Aspectj作用
+## AspectJ作用
 
-> + clean modularization of crosscutting concerns, such as error checking and handling, synchronization, context-sensitive behavior, performance optimizations, monitoring and logging, debugging support, and multi-object protocols。
+> + clean modularization of crosscutting concerns， such as error checking and handling， synchronization， context-sensitive behavior， performance optimizations， monitoring and logging， debugging support， and multi-object protocols。
 
 大意是说：干净的模块化横切关注点（也就是说单纯，基本上无侵入），如错误检查和处理，同步，上下文敏感的行为，性能优化，监控和记录，调试支持，多目标的协议。
 
@@ -34,7 +49,7 @@
 | JoinPoint | 通过Pointcut选取出来的集合中的具体的一个执行点。             |
 | Advice    | 在选取出来的JoinPoint上要执行的操作、逻辑。包含After、AfterReturning、AfterThrowing、Before、Around。 |
 | Aspect    | 关注点的模块化，可能会横切多个对象和模块。它是一个抽象的概念，指在应用程序不同模块中的某一个领域或方面。由Pointcut和Advice组成。 |
-| Target    | 被aspectj横切的对象。我们所说的joinPoint就是Target的某一行，如方法开始执行的地方、方法类调用某个其他方法的代码。 |
+| Target    | 被AspectJ横切的对象。我们所说的joinPoint就是Target的某一行，如方法开始执行的地方、方法类调用某个其他方法的代码。 |
 
 ## 项目配置
 
@@ -74,10 +89,10 @@
       </plugin>
     ```
 
-## Aspectj语法
+## AspectJ语法
 
   这个内容比较多，可重点阅读下pointcut syntax。相关链接如下
-  > + [Aspectj语法](http://www.jianshu.com/p/691acc98c0b8)
+  > + [AspectJ语法](http://www.jianshu.com/p/691acc98c0b8)
 
 ## 使用讲解
 
@@ -86,7 +101,7 @@
   ```java
     //Car.java
     public void run(int speed){
-        System.out.println(String.format("car is running at %dkm/h", speed));
+        System.out.println(String.format("car is running at %dkm/h"， speed));
     }
   ```
 
@@ -131,7 +146,7 @@
     after log ....
   ```
 
-* aspectj编译后的代码，看aop时如何实现的
+* AspectJ编译后的代码
 
   ```java
     //Car.class
@@ -141,7 +156,7 @@
         public void run(int speed) {
             try {
                 AspectLog.aspectOf().beforeLog();
-                System.out.println(String.format("car is running at %dkm/h", speed));
+                System.out.println(String.format("car is running at %dkm/h"， speed));
             } catch (Throwable var3) {
                 AspectLog.aspectOf().afterLog();
                 throw var3;
@@ -187,7 +202,7 @@
 
         public static AspectLog aspectOf() {
             if (ajc$perSingletonInstance == null) {
-                throw new NoAspectBoundException("com.clutch.AspectLog", ajc$initFailureCause);
+                throw new NoAspectBoundException("com.clutch.AspectLog"， ajc$initFailureCause);
             } else {
                 return ajc$perSingletonInstance;
             }
@@ -207,7 +222,7 @@
     }
   ```
 
-由以上编译后的代码可看出，aspectj在编译时已经将对应的代码织入到方法中
+由以上编译后的代码可看出，AspectJ在编译时已经将对应的代码织入到方法中
 
 如果将AspectLog中pointcut的execution修改为call
 
@@ -229,7 +244,7 @@
         public Car() {
         }
         public void run(int speed) {
-            System.out.println(String.format("car is running at %dkm/h", speed));
+            System.out.println(String.format("car is running at %dkm/h"， speed));
         }
     }
   ```
@@ -266,7 +281,7 @@
     import java.lang.annotation.ElementType;
     import java.lang.annotation.Target;
 
-    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Target({ElementType.TYPE， ElementType.METHOD})
     public @interface AspectTraceLog {
     }
   ```
@@ -275,7 +290,7 @@
     //在方法加上注解
     @AspectTraceLog
     public void run(int speed) {
-        System.out.println(String.format("car is running at %dkm/h", speed));
+        System.out.println(String.format("car is running at %dkm/h"， speed));
     }
   ```
 
@@ -297,7 +312,7 @@
     @AspectTraceLog
     public class Car {
         public void run(int speed) {
-            System.out.println(String.format("car is running at %dkm/h", speed));
+            System.out.println(String.format("car is running at %dkm/h"， speed));
         }
         public void stop() {
             System.out.println("car has been stopped.");
@@ -330,7 +345,7 @@
           public void run(int speed) {
               try {
                   AspectLog.aspectOf().beforeLog();
-                  System.out.println(String.format("car is running at %dkm/h", speed));
+                  System.out.println(String.format("car is running at %dkm/h"， speed));
               } catch (Throwable var3) {
                   AspectLog.aspectOf().afterLog();
                   throw var3;
@@ -424,8 +439,8 @@
         private void printMethodInfo(JoinPoint jp) {
             MethodSignature signature = (MethodSignature) jp.getSignature();
 
-            System.out.println(String.format("class: %s", signature.getDeclaringTypeName()));
-            System.out.println(String.format("Method: %s", signature.getMethod().getName()));
+            System.out.println(String.format("class: %s"， signature.getDeclaringTypeName()));
+            System.out.println(String.format("Method: %s"， signature.getMethod().getName()));
 
             Object[] paramValues = jp.getArgs();
             String[] parameterNames = signature.getParameterNames();
@@ -434,9 +449,9 @@
             int index = 0;
             for (String para : parameterNames) {
                 System.out.println(
-                        String.format("parameter name: %s; type: %s; value: %s",
-                                para,
-                                parameterTypes[index],
+                        String.format("parameter name: %s; type: %s; value: %s"，
+                                para，
+                                parameterTypes[index]，
                                 paramValues[index]));
                 index++;
             }
@@ -472,7 +487,7 @@
             throw ex;
         }
         sw.stop();
-        System.out.println(String.format("method cost time:%d ms", sw.elapsed(TimeUnit.MILLISECONDS)));
+        System.out.println(String.format("method cost time:%d ms"， sw.elapsed(TimeUnit.MILLISECONDS)));
         System.out.println("after log ....");
     }
   ```
@@ -491,44 +506,46 @@
 
 # Benchmark简单测试
 
+为了模拟真实方法的耗时，在run方法中增加Thread.sleep(20)， 并循环执行1000次
+
 ```java
   public class Main {
       public static void main(String[] args) {
           Stopwatch sw = Stopwatch.createStarted();
           Car car  = new Car();
-          for (int i = 0; i< 1000000; i++) {
+          for (int i = 0; i< 1000; i++) {
               car.run(120);
           }
           sw.stop();
-          System.out.println(String.format("benchmark total cost time:%d ms", sw.elapsed(TimeUnit.MILLISECONDS)));
+          System.out.println(String.format("benchmark total cost time: %d ms"， sw.elapsed(TimeUnit.MILLISECONDS)));
       }
   }
 ```
 
-* 使用aspect调用方法100w次，并打印pointcut方法相关信息
-  > benchmark total cost time:22686 ms
-  > benchmark total cost time:23495 ms
-  > benchmark total cost time:23586 ms
+* 使用AspectJ调用方法，并打印pointcut方法相关信息
+  > benchmark total cost time: 20063 ms
+  > benchmark total cost time: 20061 ms
+  > benchmark total cost time: 20074 ms
 
-平均耗时23255.67ms
+平均耗时20066ms
 
-* 使用aspect调用方法100w次，不打印pointcut方法相关信息
-  > benchmark total cost time:12248 ms
-  > benchmark total cost time:12234 ms
-  > benchmark total cost time:12702 ms
+* 使用AspectJ调用方法，不打印pointcut方法相关信息
+  > benchmark total cost time: 20064 ms
+  > benchmark total cost time: 20069 ms
+  > benchmark total cost time: 20053 ms
 
-平均耗时12394.67ms
+平均耗时20062ms
 
-* 不使用Aspectj
-  > benchmark total cost time:3889 ms
-  > benchmark total cost time:3598 ms
-  > benchmark total cost time:3479 ms
+* 不使用AspectJ
+  > benchmark total cost time: 20052 ms
+  > benchmark total cost time: 20036 ms
+  > benchmark total cost time: 20064 ms
 
-平均耗时3655.33ms
+平均耗时20050.67ms
 
-以上可得出一些简单的结论：
-  + AspectJ对方法的性能影响非常大，耗时是非织入代码的6倍左右。
-  + 取消pointcut中获取方法相关信息后，耗时虽有所降低，但还是非织入代码的3倍左右
-  + pointcut尽量只织入重要节点的方法
-  + pointcut方法中的可根据Log级别判断是否获取方法信息
-  + 实际项目中需做性能测试，尽量压低Aspectj对性能的影响
+可得出一些简单的结论：
+
++ AspectJ对方法的性能影响非常小，耗时相比非织入代码只多了0.076%
++ 取消pointcut中获取方法相关信息后，耗时只减少了4ms，不到0.02%
+
+以上只是一简单的性能测试，在实际项目中还是需要注意对比AOP前后的性能。毕竟项目中遇到的场景是更加复杂多样的。
