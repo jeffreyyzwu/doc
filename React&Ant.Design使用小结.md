@@ -107,6 +107,33 @@ export default function labelHOC(WrappedComponent) {
 
 另外，这种形式，在HOC中可以通过this访问到被包裹控件的state、props、方法和组件生命周期方法。
 
+## Component VS PureComponent
+
+先了解Component生命周期
+![Component生命周期](./1~pic/component-lifecycle.jpg)
+当props或者state改变的时候，会执行shouldComponentUpdate方法来判断是否需要重新render控件。Component默认的shouldComponentUpdate返回的是true，如下：
+
+```javascript
+shouldComponentUpdate(nextProps, nextState) {
+  return true;
+}
+```
+
+而PureComponent的shouldComponentUpdate是这样的：
+
+```javascript
+if (this._compositeType === CompositeTypes.PureClass) {
+  shouldUpdate = !shallowEqual(prevProps, nextProps) || ! shallowEqual(inst.state, nextState);
+}
+```
+
+shallowEqual只是做浅比较，即比较两者的内存地址是否相同，而对于其值是否发生变化，则不会理会。
+如果需要PureComponent重绘的时候，有以下两个办法：
+  1. 重写shouldUpdateComponent方法
+  2. props或者state增减参数
+
+以上，PureComponent非常适合于不变的组件，尤其是和数据、业务无关的纯展示组件，比如logo、slogan之类的，因为它的节省了大量比较的工作。但是对于大部分的业务来说，界面很少会有不变的组件，所以使用的场景会比较少。
+
 ## **Ant.Desgin控件校验规则**
 
 Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://github.com/ant-design/ant-design/blob/master/components/form/Form.tsx)的子元素才能生效。下面以一段代码示例
