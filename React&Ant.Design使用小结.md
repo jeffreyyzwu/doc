@@ -1,4 +1,8 @@
-# React & ant.design 使用小结
+---
+title: React & ant.design 使用小结
+categories: programming
+tags: [React,Ant.Design]
+---
 
 ## **列表元数据中的key不能使用索引**
 
@@ -9,6 +13,7 @@
 
 代码中可使用[shortid](https://github.com/dylang/shortid)类库生成随机ID
 
+<!--more-->
 ## **设置默认props**
 
 ```javascript
@@ -25,13 +30,13 @@ export default class Order extends React.Component{
 
 如果babel设置为es6的转码方式，会报错，因为定义静态属性不属于es6，而在es7的草案中。es6的class中只有静态方法，没有静态属性，所以需将babel设置为es7的转码方式。
 
-1. 先安装stage-0组件，其包含了es7的特性
++ 先安装stage-0组件，其包含了es7的特性
 
 ```shell
 npm install babel-preset-stage-0 --save-dev
 ```
 
-2. 在.babelrc文件添加以下配置
++ 在.babelrc文件添加以下配置
 
 ```json
 {
@@ -42,11 +47,11 @@ npm install babel-preset-stage-0 --save-dev
 ## **Higher-Order Component (HOC)**
 
 参考文章
+
 > [React 高阶组件(HOC)入门指南](https://github.com/MrErHu/blog/issues/4)
->
 > [深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/24776678)
 
-1. 反向继承(Inheritance Inversion)实现重写被包裹控件中的方法
+### 反向继承(Inheritance Inversion)实现重写被包裹控件中的方法
 
 ```javascript
 import React from "react";
@@ -216,7 +221,7 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
 
 针对以上问题，优化代码如下
 
-1. 封装Select控件
+### 封装Select控件
 
 ```javascript
   import React from "react";
@@ -253,7 +258,7 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
   }
 ```
 
-2. 提取样式，封装到FormItem中
+### 提取样式，封装到FormItem中
 
 ```javascript
   import React from "react";
@@ -291,7 +296,7 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
   }
 ```
 
-3. 封装Form，通过递归将Form实例参数form传递给每个控件，将校验规则指向到正确的form实例
+### 封装Form，通过递归将Form实例参数form传递给每个控件，将校验规则指向到正确的form实例
 
 ```javascript
   import React from "react";
@@ -322,7 +327,7 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
   }
 ```
 
-4. 提取Submit Button
+### 提取Submit Button
 
 ```javascript
   import React from "react";
@@ -347,7 +352,7 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
   }
 ```
 
-5. 最终页面
+### 最终页面
 
 ```javascript
   import React from 'react';
@@ -399,6 +404,5 @@ Ant.Desgin提供里控件校验规则功能，但必须作为[Form](https://gith
     </div>
   ), document.getElementById('root'));
 ```
-6. 页面效果
+### 页面效果
   ![页面效果](./1~pic/antd-decorator-form.jpg)
-
