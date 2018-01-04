@@ -66,7 +66,6 @@ export GOBIN=${oldgobin}
 echo install finished
 ```
 
-
 ## 设置目录结构
 
 ```text
@@ -87,6 +86,12 @@ demo
 + utility.go中的**package**名称最好和目录**utility**一致，而文件名可以随意。 如果不一致，生成的.a文件和目录名一致，导致在import时需填写目录名，而引用包时则需要包名。例如：目录为utility，包名为util，则生成的静态包文件是utility.a，引用该包:import "utility"，使用包中成员：util.print()
 + 生成的可执行文件的名称是取自main.go的目录名，所以这里建议为项目名
 + main.go中设置**package main**，文件名建议为**main.go**
+
+## Go命令
+
++ go build : 加上可以编译的go源文件编译生成一个可执行文件，放在为当前路径
++ go install : go build + 把编译后的可执行文件放到GOPATH/bin目录下
++ go get : 从指定源上面下载或者更新指定的代码和依赖，并对他们进行编译和安装。git clone + go install
 
 ## VSCode中Go Debug配置
 
