@@ -15,7 +15,7 @@
 
 ## 设置GOPATH
 
-Go项目的地址需添加到GOPATH中，通过分号```;```连接。import package时，Go会遍历GOPATH中的每个地址下的src目录，判断package是否存在，编译时同样如此。
+Go项目的地址需添加到GOPATH中，通过分号```;```(windows)  ```:```(Mac OS)连接。import package时，Go会遍历GOPATH中的每个地址下的src目录，判断package是否存在，编译时同样如此。
 在开发环境下，还能手工设置系统变量GOPATH，编译环境就不能手工添加每个项目的地址。所以需要**项目根目录**下添加build脚本文件
 
 **windows环境**build.bat
@@ -24,8 +24,8 @@ Go项目的地址需添加到GOPATH中，通过分号```;```连接。import pack
 @echo off
 setlocal
 
-if not exist install.bat (
-  echo install.bat must be run from its folder
+if not exist build.bat (
+  echo build.bat must be run from its folder
   exit
 )
 
